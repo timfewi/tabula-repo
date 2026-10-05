@@ -3,3 +3,4 @@
 result
 result-*
 __pycache__/
+.ast-index/
