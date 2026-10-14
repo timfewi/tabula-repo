@@ -13,4 +13,9 @@ Use Python standard library only unless a demonstrated requirement warrants a
 dependency. Run project-check fast. Package builds and broader integration checks
 are separate workloads justified by packaging or host changes; never activate a
 host as a side effect. Keep a concise development checkpoint in README.md.
-Do not stage, commit, publish or deploy without authorization.
+
+- Task-scoped staging is authorized. After review and required checks, commit
+  the task changes and push to the current branch's existing upstream. Preserve
+  unrelated work.
+- Deployment, activation, installation, releases, visibility changes and history
+  rewrites require separate authorization.
