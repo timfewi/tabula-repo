@@ -207,16 +207,33 @@ and aarch64-linux. Installation and activation belong to the consuming host.
 `project-check fast` runs formatting, lint and temporary-fixture behavioral tests.
 Package builds and broader integration checks are separate workloads.
 
-## Development checkpoint — 2026-10-16
+## Source layout
 
-Both goals are implemented locally: Markdown evidence, diagnosis, section review,
-explicit receipt migration, registered topic cards, bounded context and separate
-test-result imports. Baseline failures were reproduced before implementation;
-Goal 1 passed its fast gate before Goal 2 began. CLI regression fixtures cover a
-small project and a Research/Desktop/Shared project, including a changed adapter
-that leaves desktop review intact. Final diff review and `project-check fast`
-passed with 47 tests, including actual CLI/JSON and UTF-8 budget checks. A direct
-comparison with the original CLI confirmed the reference, code-example and angle-
-destination regressions and the separate migration/review states. No package
-build, host activation, consumer-card modification or model comparison was
-performed. Model-quality benefits remain unmeasured.
+The Python package separates responsibilities without third-party dependencies:
+
+| File | Responsibility |
+| --- | --- |
+| [tabula.py](tabula.py), [cli.py](tabula/cli.py) | Source launcher, arguments, command dispatch and exit codes. |
+| [markdown.py](tabula/markdown.py) | Pure Markdown parsing into sections and evidence links. |
+| [cards.py](tabula/cards.py) | Card registration, graph traversal, source inspection and snapshots. |
+| [receipts.py](tabula/receipts.py) | Receipt versions, schema validation and persistence. |
+| [evidence.py](tabula/evidence.py) | Test-input snapshots, result imports and applicability. |
+| [operations.py](tabula/operations.py) | Initialization, updates, review acknowledgements, checks and diagnosis. |
+| [context.py](tabula/context.py) | Task-focused selection and byte-bounded human/JSON rendering. |
+| [storage.py](tabula/storage.py), [limits.py](tabula/limits.py) | Safe file I/O, strict JSON, diagnostics and shared bounds. |
+
+Internal callers import the owning module directly; the package initializer does
+not re-export a second API. Keep `tabula.py` beside the `tabula/` directory when
+running from source. The Nix wrapper includes the launcher and package Python
+files, excluding tests and development caches from its runtime source.
+
+## Development checkpoint — 2026-10-25
+
+The implementation is split into focused modules; CLI syntax, receipt versions
+and safety limits are unchanged. All 47 behavioral tests pass, including CLI runs
+from outside the checkout. A 22-step comparison against the original monolith
+matched stdout, stderr, exit codes and receipt bytes, covering all seven commands,
+review invalidation, stale test evidence, error paths and legacy migration.
+The x86_64-linux Nix package built and passed the same comparison outside the
+checkout. ARM execution, host activation and model-quality benefits remain
+unverified.

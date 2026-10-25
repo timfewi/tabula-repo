@@ -23,11 +23,18 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          source = pkgs.lib.fileset.toSource {
+            root = ./.;
+            fileset = pkgs.lib.fileset.unions [
+              ./tabula.py
+              (pkgs.lib.fileset.fileFilter (file: file.hasExt "py") ./tabula)
+            ];
+          };
           tabula = pkgs.writeShellApplication {
             name = "tabula";
             runtimeInputs = [ pkgs.python3 ];
             text = ''
-              exec python3 ${./tabula.py} "$@"
+              exec python3 ${source}/tabula.py "$@"
             '';
           };
         in

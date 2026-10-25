@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import tabula
+from tabula import limits, operations
 
 
 class EvidenceTests(unittest.TestCase):
@@ -18,7 +18,7 @@ class EvidenceTests(unittest.TestCase):
         self.source("README.md", "readme\n")
         self.source("adapter.py", "before\n")
         self.source("desktop.py", "desktop\n")
-        tabula.initialize(self.root, "Fixture")
+        operations.initialize(self.root, "Fixture")
 
     def source(self, name, content):
         path = self.root / name
@@ -32,12 +32,13 @@ class EvidenceTests(unittest.TestCase):
         result = subprocess.run(
             [
                 sys.executable,
-                tabula.__file__,
+                str(Path(__file__).resolve().parents[1] / "tabula.py"),
                 command,
                 str(self.root),
                 "--json",
                 *options,
             ],
+            cwd=self.root,
             capture_output=True,
             text=True,
             check=False,
@@ -49,13 +50,13 @@ class EvidenceTests(unittest.TestCase):
         return (self.root / ".tabula/state.json").read_bytes()
 
     def sections(self):
-        return tabula.check(self.root)["sections"]
+        return operations.check(self.root)["sections"]
 
     def test_reference_source_change_is_not_missed(self):
         self.card(
             '# Fixture\n[base](../README.md)\n\n## Research\n[adapter][impl]\n\n[impl]: ../adapter.py "implementation"\n'
         )
-        tabula.update(self.root)
+        operations.update(self.root)
         self.source("adapter.py", "changed\n")
         result = self.cli("check", code=1)
         self.assertEqual(result["changed"], ["adapter.py"])
@@ -223,20 +224,20 @@ class EvidenceTests(unittest.TestCase):
         self.assertIn("adapter.py", result["changed"])
         self.assertIn("entry/2-research-1", result["affected_sections"])
         self.assertEqual(result["diagnostics"][0]["kind"], "missing")
-        self.source("adapter.py", "x" * (tabula.SOURCE_LIMIT + 1))
+        self.source("adapter.py", "x" * (limits.SOURCE_LIMIT + 1))
         self.assertEqual(
             self.cli("doctor", code=2)["diagnostics"][0]["kind"], "oversized"
         )
 
     def test_source_and_section_counts_are_bounded(self):
         links = []
-        for index in range(tabula.SOURCE_COUNT + 1):
+        for index in range(limits.SOURCE_COUNT + 1):
             self.source(f"s{index}", "source")
             links.append(f"[s](../s{index})")
         self.card("# Fixture\n" + "\n".join(links))
         result = self.cli("doctor", code=2)
         self.assertEqual(result["diagnostics"][0]["kind"], "oversized")
-        self.card("# Fixture\n[base](../README.md)\n" + "## S\n" * tabula.SECTION_COUNT)
+        self.card("# Fixture\n[base](../README.md)\n" + "## S\n" * limits.SECTION_COUNT)
         self.cli("update", code=2)
 
     def test_unrelated_prose_edits_preserve_review_and_inline_html_is_code(self):

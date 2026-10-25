@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-import tabula
+from tabula import cards, limits, operations
 
 
 class ContextTests(unittest.TestCase):
@@ -20,7 +20,7 @@ class ContextTests(unittest.TestCase):
         self.write("research.py", "adapter = 1\n")
         self.write("desktop.py", "desktop = 1\n")
         self.write("shared.py", "shared = 1\n")
-        tabula.initialize(self.root, "Own the fixture.")
+        operations.initialize(self.root, "Own the fixture.")
 
     def write(self, name, content):
         path = self.root / name
@@ -31,12 +31,13 @@ class ContextTests(unittest.TestCase):
         return subprocess.run(
             [
                 sys.executable,
-                tabula.__file__,
+                str(Path(__file__).resolve().parents[1] / "tabula.py"),
                 command,
                 str(self.root),
                 *(["--json"] if json_output else []),
                 *args,
             ],
+            cwd=self.root,
             input=data,
             capture_output=True,
             check=False,
@@ -247,8 +248,8 @@ class ContextTests(unittest.TestCase):
             patch.object(Path, "rglob", side_effect=AssertionError("recursive scan")),
             patch.object(Path, "glob", side_effect=AssertionError("scan")),
         ):
-            self.assertEqual(tabula.doctor(self.root)["status"], "ok")
-            tabula.update(self.root)
+            self.assertEqual(operations.doctor(self.root)["status"], "ok")
+            operations.update(self.root)
         self.assertEqual(set(self.cli("doctor")["cards"]), {"entry"})
 
     def test_registration_path_symlink_and_depth_boundaries(self):
@@ -272,7 +273,7 @@ class ContextTests(unittest.TestCase):
 
     def test_card_count_aggregate_and_global_source_limits(self):
         self.registry(
-            [{"id": f"c{i}", "path": f"c{i}.md"} for i in range(tabula.CARD_COUNT)]
+            [{"id": f"c{i}", "path": f"c{i}.md"} for i in range(limits.CARD_COUNT)]
         )
         self.cli("doctor", code=2)
         self.registry([{"id": f"c{i}", "path": f"c{i}.md"} for i in range(9)])
@@ -281,11 +282,11 @@ class ContextTests(unittest.TestCase):
                 f".tabula/c{index}.md", "# Card\n[source](../README.md)\n" + "x" * 9500
             )
         result = self.cli("doctor", code=2)
-        self.assertGreater(result["aggregate_card_bytes"], tabula.CARD_TOTAL)
+        self.assertGreater(result["aggregate_card_bytes"], limits.CARD_TOTAL)
         self.assertTrue(any(d["kind"] == "oversized" for d in result["diagnostics"]))
         self.registry([{"id": "many", "path": "many.md"}])
         links = []
-        for index in range(tabula.SOURCE_COUNT):
+        for index in range(limits.SOURCE_COUNT):
             self.write(f"src{index}", "bytes")
             links.append(f"[source](../src{index})")
         self.write(".tabula/many.md", "# Many\n" + "\n".join(links))
@@ -382,7 +383,7 @@ class ContextTests(unittest.TestCase):
                 self.assertEqual(
                     (self.root / ".tabula/state.json").read_bytes(), before
                 )
-        self.cli("import-test", data=b"x" * (tabula.TEST_LIMIT + 1), code=2)
+        self.cli("import-test", data=b"x" * (limits.TEST_LIMIT + 1), code=2)
         self.cli("import-test", data=b'{"version":1,"version":1}', code=2)
         self.cli("import-test", data=b"[" * 2000, code=2)
         self.assertEqual((self.root / ".tabula/state.json").read_bytes(), before)
@@ -405,22 +406,22 @@ class ContextTests(unittest.TestCase):
             ".tabula/ENTRY.md",
             "# Fixture\n[source](../README.md)\n" + "[topic](research.md) " * 300,
         )
-        original = tabula.read_file
+        original = cards.read_file
         reads = []
 
         def observed(path, limit):
             reads.append(path.relative_to(self.root).as_posix())
             return original(path, limit)
 
-        with patch.object(tabula, "read_file", side_effect=observed):
-            self.assertEqual(tabula.doctor(self.root)["status"], "ok")
+        with patch.object(cards, "read_file", side_effect=observed):
+            self.assertEqual(operations.doctor(self.root)["status"], "ok")
         self.assertEqual(reads.count("README.md"), 1)
         self.assertEqual(reads.count("shared.py"), 1)
 
     def test_test_result_limit_and_missing_test_inputs(self):
         self.topics()
         record = self.record()
-        for index in range(tabula.TEST_COUNT):
+        for index in range(limits.TEST_COUNT):
             record["check_id"] = f"check-{index:02}"
             self.cli("import-test", data=json.dumps(record).encode())
         before = (self.root / ".tabula/state.json").read_bytes()
@@ -439,7 +440,7 @@ class ContextTests(unittest.TestCase):
         state["logs"] = "PRIVATE"
         self.write(".tabula/state.json", json.dumps(state))
         self.assertNotIn("PRIVATE", json.dumps(self.cli("doctor", code=2)))
-        self.write(".tabula/cards.json", " " * (tabula.REGISTRY_LIMIT + 1))
+        self.write(".tabula/cards.json", " " * (limits.REGISTRY_LIMIT + 1))
         result = self.cli("doctor", code=2)
         self.assertEqual(result["diagnostics"][0]["kind"], "oversized")
 

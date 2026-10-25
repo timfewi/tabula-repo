@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import tabula
+from tabula import cli, limits, operations
 
 
 class TabulaTests(unittest.TestCase):
@@ -19,18 +19,18 @@ class TabulaTests(unittest.TestCase):
         (self.root / "README.md").write_text("# Fixture\n\nA source fixture.\n")
 
     def init(self):
-        tabula.initialize(self.root, "Own the fixture.")
+        operations.initialize(self.root, "Own the fixture.")
 
     def test_init_check_and_update_preserve_explanations(self):
         self.init()
-        self.assertEqual(tabula.check(self.root)["status"], "current")
+        self.assertEqual(operations.check(self.root)["status"], "current")
         entry = self.root / ".tabula/ENTRY.md"
         text = entry.read_bytes()
         (self.root / "README.md").write_text("# Changed source\n")
-        self.assertEqual(tabula.check(self.root)["changed"], ["README.md"])
-        tabula.update(self.root)
+        self.assertEqual(operations.check(self.root)["changed"], ["README.md"])
+        operations.update(self.root)
         self.assertEqual(entry.read_bytes(), text)
-        self.assertEqual(tabula.check(self.root)["status"], "current")
+        self.assertEqual(operations.check(self.root)["status"], "current")
         with self.assertRaisesRegex(ValueError, "already exists"):
             self.init()
         self.assertEqual(entry.read_bytes(), text)
@@ -39,9 +39,9 @@ class TabulaTests(unittest.TestCase):
         self.init()
         entry = self.root / ".tabula/ENTRY.md"
         entry.write_text(entry.read_text() + "\nA reviewed architecture explanation.\n")
-        self.assertEqual(tabula.check(self.root)["changed"], [".tabula/ENTRY.md"])
-        tabula.update(self.root)
-        self.assertEqual(tabula.check(self.root)["status"], "current")
+        self.assertEqual(operations.check(self.root)["changed"], [".tabula/ENTRY.md"])
+        operations.update(self.root)
+        self.assertEqual(operations.check(self.root)["status"], "current")
 
     def test_broken_link_does_not_replace_receipt(self):
         self.init()
@@ -49,7 +49,7 @@ class TabulaTests(unittest.TestCase):
         previous = receipt.read_bytes()
         (self.root / "README.md").unlink()
         with self.assertRaises(FileNotFoundError):
-            tabula.update(self.root)
+            operations.update(self.root)
         self.assertEqual(receipt.read_bytes(), previous)
 
     def test_links_are_relative_and_encoded_spaces_work(self):
@@ -61,7 +61,7 @@ class TabulaTests(unittest.TestCase):
             "[folder](../tests/)\n"
         )
         (self.root / "tests").mkdir()
-        tabula.update(self.root)
+        operations.update(self.root)
         state = json.loads((self.root / ".tabula/state.json").read_text())
         self.assertEqual(list(state["sources"]), ["source file.py"])
 
@@ -86,7 +86,7 @@ class TabulaTests(unittest.TestCase):
                     f"# Fixture\n[x]({target})\n"
                 )
                 with self.assertRaises(ValueError):
-                    tabula.update(self.root)
+                    operations.update(self.root)
 
     def test_special_and_large_files_are_bounded(self):
         self.init()
@@ -95,14 +95,14 @@ class TabulaTests(unittest.TestCase):
         entry.write_text("# Fixture\n[source](../source.py)\n")
         os.mkfifo(path)
         with self.assertRaises(ValueError):
-            tabula.update(self.root)
+            operations.update(self.root)
         path.unlink()
-        path.write_bytes(b"x" * (tabula.SOURCE_LIMIT + 1))
+        path.write_bytes(b"x" * (limits.SOURCE_LIMIT + 1))
         with self.assertRaises(ValueError):
-            tabula.update(self.root)
-        entry.write_bytes(b"# " + b"x" * tabula.ENTRY_LIMIT)
+            operations.update(self.root)
+        entry.write_bytes(b"# " + b"x" * limits.ENTRY_LIMIT)
         with self.assertRaises(ValueError):
-            tabula.update(self.root)
+            operations.update(self.root)
 
     def test_state_symlink_cannot_redirect_writes(self):
         self.init()
@@ -111,7 +111,7 @@ class TabulaTests(unittest.TestCase):
         state.symlink_to(self.root / "README.md")
         original = (self.root / "README.md").read_bytes()
         with self.assertRaises(ValueError):
-            tabula.update(self.root)
+            operations.update(self.root)
         self.assertEqual((self.root / "README.md").read_bytes(), original)
 
     def test_cli_status_is_machine_readable_and_does_not_execute_repo_code(self):
@@ -119,19 +119,22 @@ class TabulaTests(unittest.TestCase):
         (self.root / ".envrc").write_text("touch SHOULD_NOT_EXIST\n")
         command = [
             sys.executable,
-            str(Path(tabula.__file__)),
+            str(Path(__file__).resolve().parents[1] / "tabula.py"),
             "init",
             str(self.root),
             "--purpose",
             "Fixture",
             "--json",
         ]
-        result = subprocess.run(command, text=True, capture_output=True, check=True)
+        result = subprocess.run(
+            command, cwd=self.root, text=True, capture_output=True, check=True
+        )
         self.assertEqual(json.loads(result.stdout)["status"], "created")
         self.assertFalse((self.root / "SHOULD_NOT_EXIST").exists())
         (self.root / "README.md").write_text("changed\n")
         result = subprocess.run(
             command[:2] + ["check", str(self.root), "--json"],
+            cwd=self.root,
             check=False,
             text=True,
             capture_output=True,
@@ -144,7 +147,7 @@ class TabulaTests(unittest.TestCase):
         (self.root / ".tabula/state.json").write_text('{"PRIVATE":')
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
-            status = tabula.main(["check", str(self.root), "--json"])
+            status = cli.main(["check", str(self.root), "--json"])
         self.assertEqual(status, 2)
         self.assertNotIn("PRIVATE", output.getvalue())
 
