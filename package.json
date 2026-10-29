@@ -1,0 +1,26 @@
+{
+  "name": "tabula-repo",
+  "version": "0.1.0",
+  "description": "Offline repository guides with source freshness checks",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "tabula": "bin/tabula.mjs"
+  },
+  "files": [
+    "bin/tabula.mjs",
+    "docs/reference.md",
+    "LICENSE",
+    "THIRD_PARTY_LICENSES"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "optionalDependencies": {
+    "tabula-repo-x86_64-unknown-linux-musl": "0.1.0",
+    "tabula-repo-aarch64-unknown-linux-musl": "0.1.0",
+    "tabula-repo-x86_64-apple-darwin": "0.1.0",
+    "tabula-repo-aarch64-apple-darwin": "0.1.0",
+    "tabula-repo-x86_64-pc-windows-msvc": "0.1.0"
+  }
+}

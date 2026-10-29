@@ -1,0 +1,10 @@
+usage: tabula import-test [-h] [--json] [root]
+
+Record a caller-supplied test result from stdin.
+
+positional arguments:
+  root
+
+options:
+  -h, --help  show this help message and exit
+  --json

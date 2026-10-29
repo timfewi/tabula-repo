@@ -1,0 +1,11 @@
+usage: tabula init [-h] [--json] --purpose PURPOSE [root]
+
+Create a starter guide from the repository's declaring files.
+
+positional arguments:
+  root
+
+options:
+  -h, --help         show this help message and exit
+  --json
+  --purpose PURPOSE

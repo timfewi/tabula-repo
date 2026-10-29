@@ -1,0 +1,14 @@
+usage: tabula context [-h] [--json] --files PATH [PATH ...]
+                          --max-bytes MAX_BYTES
+                          [root]
+
+Select guide sections related to specific source files.
+
+positional arguments:
+  root
+
+options:
+  -h, --help            show this help message and exit
+  --json
+  --files PATH [PATH ...]
+  --max-bytes MAX_BYTES

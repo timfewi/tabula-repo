@@ -1,0 +1,307 @@
+[
+  {
+    "args": [],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula [-h] [--version]\n                  {init,update,check,doctor,context,test-snapshot,import-test} ...\ntabula: error: the following arguments are required: command\n"
+  },
+  {
+    "args": [
+      "--help"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula [-h] [--version]\n                  {init,update,check,doctor,context,test-snapshot,import-test} ...\n\nKeep a short guide to your repository and find explanations that need review.\n\npositional arguments:\n  {init,update,check,doctor,context,test-snapshot,import-test}\n    init                Create a starter guide from the repository's declaring\n                        files.\n    update              Record current file hashes after editing your guide.\n    check               Report source changes that may make your guide\n                        outdated.\n    doctor              Explain missing files, invalid links and size limits.\n    context             Select guide sections related to specific source\n                        files.\n    test-snapshot       Describe the source inputs for a separately run test.\n    import-test         Record a caller-supplied test result from stdin.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "-h"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula [-h] [--version]\n                  {init,update,check,doctor,context,test-snapshot,import-test} ...\n\nKeep a short guide to your repository and find explanations that need review.\n\npositional arguments:\n  {init,update,check,doctor,context,test-snapshot,import-test}\n    init                Create a starter guide from the repository's declaring\n                        files.\n    update              Record current file hashes after editing your guide.\n    check               Report source changes that may make your guide\n                        outdated.\n    doctor              Explain missing files, invalid links and size limits.\n    context             Select guide sections related to specific source\n                        files.\n    test-snapshot       Describe the source inputs for a separately run test.\n    import-test         Record a caller-supplied test result from stdin.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--version"
+    ],
+    "code": 0,
+    "stdout": "Tabula 0.1.0\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--ver"
+    ],
+    "code": 0,
+    "stdout": "Tabula 0.1.0\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--bogus"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula [-h] [--version]\n                  {init,update,check,doctor,context,test-snapshot,import-test} ...\ntabula: error: the following arguments are required: command\n"
+  },
+  {
+    "args": [
+      "unknown"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula [-h] [--version]\n                  {init,update,check,doctor,context,test-snapshot,import-test} ...\ntabula: error: argument command: invalid choice: 'unknown' (choose from 'init', 'update', 'check', 'doctor', 'context', 'test-snapshot', 'import-test')\n"
+  },
+  {
+    "args": [
+      "init",
+      "--help"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula init [-h] [--json] --purpose PURPOSE [root]\n\nCreate a starter guide from the repository's declaring files.\n\npositional arguments:\n  root\n\noptions:\n  -h, --help         show this help message and exit\n  --json\n  --purpose PURPOSE\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "update",
+      "--help"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula update [-h] [--json] [--upgrade]\n                         [--review SECTION [SECTION ...]]\n                         [root]\n\nRecord current file hashes after editing your guide.\n\npositional arguments:\n  root\n\noptions:\n  -h, --help            show this help message and exit\n  --json\n  --upgrade\n  --review SECTION [SECTION ...]\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "check",
+      "--help"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula check [-h] [--json] [root]\n\nReport source changes that may make your guide outdated.\n\npositional arguments:\n  root\n\noptions:\n  -h, --help  show this help message and exit\n  --json\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "doctor",
+      "--help"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula doctor [-h] [--json] [root]\n\nExplain missing files, invalid links and size limits.\n\npositional arguments:\n  root\n\noptions:\n  -h, --help  show this help message and exit\n  --json\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "context",
+      "--help"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula context [-h] [--json] --files PATH [PATH ...]\n                          --max-bytes MAX_BYTES\n                          [root]\n\nSelect guide sections related to specific source files.\n\npositional arguments:\n  root\n\noptions:\n  -h, --help            show this help message and exit\n  --json\n  --files PATH [PATH ...]\n  --max-bytes MAX_BYTES\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "test-snapshot",
+      "--help"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula test-snapshot [-h] [--json] --files PATH [PATH ...] [root]\n\nDescribe the source inputs for a separately run test.\n\npositional arguments:\n  root\n\noptions:\n  -h, --help            show this help message and exit\n  --json\n  --files PATH [PATH ...]\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "import-test",
+      "--help"
+    ],
+    "code": 0,
+    "stdout": "usage: tabula import-test [-h] [--json] [root]\n\nRecord a caller-supplied test result from stdin.\n\npositional arguments:\n  root\n\noptions:\n  -h, --help  show this help message and exit\n  --json\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "init"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula init [-h] [--json] --purpose PURPOSE [root]\ntabula init: error: the following arguments are required: --purpose\n"
+  },
+  {
+    "args": [
+      "init",
+      "--purpose"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula init [-h] [--json] --purpose PURPOSE [root]\ntabula init: error: argument --purpose: expected one argument\n"
+  },
+  {
+    "args": [
+      "init",
+      "--json=bad",
+      "--purpose",
+      "x"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula init [-h] [--json] --purpose PURPOSE [root]\ntabula init: error: argument --json: ignored explicit argument 'bad'\n"
+  },
+  {
+    "args": [
+      "check",
+      "--unknown"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula [-h] [--version]\n                  {init,update,check,doctor,context,test-snapshot,import-test} ...\ntabula: error: unrecognized arguments: --unknown\n"
+  },
+  {
+    "args": [
+      "context",
+      "--files"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula context [-h] [--json] --files PATH [PATH ...]\n                          --max-bytes MAX_BYTES\n                          [root]\ntabula context: error: argument --files: expected at least one argument\n"
+  },
+  {
+    "args": [
+      "context",
+      "--files",
+      "README.md"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula context [-h] [--json] --files PATH [PATH ...]\n                          --max-bytes MAX_BYTES\n                          [root]\ntabula context: error: the following arguments are required: --max-bytes\n"
+  },
+  {
+    "args": [
+      "context",
+      "--files",
+      "README.md",
+      "--max-bytes",
+      "no"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula context [-h] [--json] --files PATH [PATH ...]\n                          --max-bytes MAX_BYTES\n                          [root]\ntabula context: error: argument --max-bytes: invalid int value: 'no'\n"
+  },
+  {
+    "args": [
+      "context",
+      "--files",
+      "README.md",
+      "--max-bytes",
+      "-1"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "tabula: byte budget cannot fit response; increase --max-bytes\n"
+  },
+  {
+    "args": [
+      "context",
+      "--files",
+      "README.md",
+      "--max-bytes",
+      "4_000"
+    ],
+    "code": 2,
+    "stdout": "status: error\ndiagnostics: [{'kind': 'missing', 'file': '.tabula/ENTRY.md', 'line': None, 'message': 'Unreadable or malformed input; inspect the selected file.'}]\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "context",
+      "--files",
+      "README.md",
+      "--max-bytes",
+      "\uff14\uff10\uff10\uff10"
+    ],
+    "code": 2,
+    "stdout": "status: error\ndiagnostics: [{'kind': 'missing', 'file': '.tabula/ENTRY.md', 'line': None, 'message': 'Unreadable or malformed input; inspect the selected file.'}]\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "context",
+      "--files",
+      "README.md",
+      "--max-b",
+      "4000"
+    ],
+    "code": 2,
+    "stdout": "status: error\ndiagnostics: [{'kind': 'missing', 'file': '.tabula/ENTRY.md', 'line': None, 'message': 'Unreadable or malformed input; inspect the selected file.'}]\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "context",
+      "--files",
+      "README.md",
+      "--max-bytes",
+      "4000",
+      "--js"
+    ],
+    "code": 2,
+    "stdout": "{\"status\":\"error\",\"diagnostics\":[{\"kind\":\"missing\",\"file\":\".tabula/ENTRY.md\",\"line\":null,\"message\":\"Unreadable or malformed input; inspect the selected file.\"}]}\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "init",
+      "--purp",
+      "x",
+      "--js"
+    ],
+    "code": 0,
+    "stdout": "{\"status\":\"created\",\"sources\":1,\"review\":\"unreviewed; expand ownership and flow from source\",\"tests\":{\"status\":\"missing\",\"basis\":\"caller assertions, not proof of execution\",\"results\":[]}}\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "update",
+      "--u"
+    ],
+    "code": 2,
+    "stdout": "status: error\nkind: missing\nfile: None\nline: None\nmessage: Unreadable or malformed input; inspect the selected file.\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "update",
+      "--re",
+      "foo"
+    ],
+    "code": 2,
+    "stdout": "status: error\nkind: missing\nfile: None\nline: None\nmessage: Unreadable or malformed input; inspect the selected file.\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "check",
+      "--j"
+    ],
+    "code": 2,
+    "stdout": "{\"status\":\"error\",\"kind\":\"missing\",\"file\":null,\"line\":null,\"message\":\"Unreadable or malformed input; inspect the selected file.\"}\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "check",
+      "--version"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula [-h] [--version]\n                  {init,update,check,doctor,context,test-snapshot,import-test} ...\ntabula: error: unrecognized arguments: --version\n"
+  },
+  {
+    "args": [
+      "check",
+      "--json",
+      "x",
+      "y"
+    ],
+    "code": 2,
+    "stdout": "",
+    "stderr": "usage: tabula [-h] [--version]\n                  {init,update,check,doctor,context,test-snapshot,import-test} ...\ntabula: error: unrecognized arguments: y\n"
+  }
+]

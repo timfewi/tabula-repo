@@ -1,0 +1,10 @@
+usage: tabula check [-h] [--json] [root]
+
+Report source changes that may make your guide outdated.
+
+positional arguments:
+  root
+
+options:
+  -h, --help  show this help message and exit
+  --json

@@ -4,3 +4,8 @@ result
 result-*
 __pycache__/
 .ast-index/
+/target/
+/dist/
+/node_modules/
+/*.tgz
+/.tabula/state.json

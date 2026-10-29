@@ -1,14 +1,11 @@
-set shell := ["bash", ".just-shell"]
-set positional-arguments
+# Optional shortcuts; Cargo remains the primary development entrypoint.
+check:
+    cargo fmt --all -- --check
+    cargo clippy --locked --all-targets -- -D warnings
+    cargo test --locked
 
-# Show available recipes.
-default:
-    @just --list
+package:
+    cargo package --locked --allow-dirty
 
-# Run declared fast checks; accepts project-check options such as --json.
-lint *args:
-    @project-check fast "$@"
-
-# Run the declared full gate; accepts project-check options such as --json.
-verify *args:
-    @project-check full "$@"
+release:
+    cargo build --locked --release

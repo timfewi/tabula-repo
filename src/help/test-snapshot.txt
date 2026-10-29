@@ -1,0 +1,11 @@
+usage: tabula test-snapshot [-h] [--json] --files PATH [PATH ...] [root]
+
+Describe the source inputs for a separately run test.
+
+positional arguments:
+  root
+
+options:
+  -h, --help            show this help message and exit
+  --json
+  --files PATH [PATH ...]

@@ -1,20 +1,14 @@
 {
-  description = "Portable, source-bound repository context without a service";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/eaad089433ca2bb662274377d33df3d0e51ef28b";
-    project-check = {
-      url = "github:timfewi/project-check-nix/56962fbd92f992938f39b44b2590adf843ebe757";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-
+  description = "Tabula: offline repository guides with source freshness checks";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/eaad089433ca2bb662274377d33df3d0e51ef28b";
   outputs =
-    { nixpkgs, project-check, ... }:
+    { nixpkgs, ... }:
     let
       systems = [
         "x86_64-linux"
         "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
     in
@@ -23,24 +17,48 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          source = pkgs.lib.fileset.toSource {
-            root = ./.;
-            fileset = pkgs.lib.fileset.unions [
-              ./tabula.py
-              (pkgs.lib.fileset.fileFilter (file: file.hasExt "py") ./tabula)
-            ];
-          };
-          tabula = pkgs.writeShellApplication {
-            name = "tabula";
-            runtimeInputs = [ pkgs.python3 ];
-            text = ''
-              exec python3 ${source}/tabula.py "$@"
-            '';
-          };
+          mkTabula =
+            buildPkgs:
+            buildPkgs.rustPlatform.buildRustPackage {
+              pname = "tabula";
+              version = "0.1.0";
+              src = pkgs.lib.fileset.toSource {
+                root = ./.;
+                fileset = pkgs.lib.fileset.unions [
+                  ./Cargo.toml
+                  ./Cargo.lock
+                  ./src
+                  (pkgs.lib.fileset.fileFilter (
+                    file: file.hasExt "rs" || file.hasExt "json" || file.hasExt "sha256"
+                  ) ./tests)
+                  ./README.md
+                  ./docs/reference.md
+                  ./LICENSE
+                  ./THIRD_PARTY_LICENSES
+                ];
+              };
+              cargoLock.lockFile = ./Cargo.lock;
+              postInstall = ''
+                install -Dm644 README.md "$out/share/doc/tabula/README.md"
+                install -Dm644 docs/reference.md "$out/share/doc/tabula/REFERENCE.md"
+                install -Dm644 LICENSE "$out/share/doc/tabula/LICENSE"
+                install -Dm644 THIRD_PARTY_LICENSES "$out/share/doc/tabula/THIRD_PARTY_LICENSES"
+              '';
+              meta = {
+                description = "Offline repository guides with source freshness checks";
+                license = pkgs.lib.licenses.mit;
+                mainProgram = "tabula";
+                platforms = systems;
+              };
+            };
+          tabula = mkTabula pkgs;
         in
         {
           inherit tabula;
           default = tabula;
+        }
+        // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          tabula-static = mkTabula pkgs.pkgsStatic;
         }
       );
       devShells = forAllSystems (
@@ -50,24 +68,20 @@
         in
         {
           default = pkgs.mkShell {
-            packages = [
-              project-check.packages.${system}.project-check
-              pkgs.bashInteractive
-              pkgs.coreutils
-              pkgs.deadnix
-              pkgs.git
-              pkgs.jq
-              pkgs.just
-              pkgs.nix
-              pkgs.nixfmt
-              pkgs.python3
-              pkgs.ripgrep
-              pkgs.ruff
-              pkgs.statix
+            packages = with pkgs; [
+              cargo
+              rustc
+              rustfmt
+              clippy
+              just
+              nodejs
+              bun
+              nixfmt
+              shellcheck
             ];
           };
         }
       );
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt);
     };
 }

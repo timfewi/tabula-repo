@@ -1,0 +1,28 @@
+[package]
+name = "tabula-repo"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Offline repository guides with source freshness checks"
+license = "MIT"
+readme = "README.md"
+include = ["/Cargo.toml", "/Cargo.lock", "/src/**", "/README.md", "/docs/reference.md", "/LICENSE", "/THIRD_PARTY_LICENSES", "/tests/*.rs", "/tests/reference/*.json", "/tests/reference/*.sha256"]
+
+[lib]
+name = "tabula"
+
+[[bin]]
+name = "tabula"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+sha2 = "0.11.1"
+regex = "1.12.3"
+tempfile = "3.27.0"
+
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "1.1.4", features = ["fs"] }
+
+[dev-dependencies]
+base64 = "0.22.1"

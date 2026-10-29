@@ -1,0 +1,10 @@
+usage: tabula doctor [-h] [--json] [root]
+
+Explain missing files, invalid links and size limits.
+
+positional arguments:
+  root
+
+options:
+  -h, --help  show this help message and exit
+  --json

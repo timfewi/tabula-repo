@@ -1,0 +1,14 @@
+usage: tabula update [-h] [--json] [--upgrade]
+                         [--review SECTION [SECTION ...]]
+                         [root]
+
+Record current file hashes after editing your guide.
+
+positional arguments:
+  root
+
+options:
+  -h, --help            show this help message and exit
+  --json
+  --upgrade
+  --review SECTION [SECTION ...]

@@ -1,21 +1,24 @@
-# Repository policy
+# Repository guide
 
-Rule one: lean code, clear behavior and few moving parts. This tool creates and
-checks portable context files; it does not own an agent loop, index or memory
-service. Read README.md before changing the format or CLI.
+Tabula creates and checks portable repository guides. Start with README.md and
+.tabula/ENTRY.md. Keep source and documentation in English.
 
-Keep human explanations in ENTRY.md and derived freshness evidence in state.json.
-No implicit project execution, network requests, recursive workspace scans or
-credential reads. Preserve existing cards and unrelated work. Source and CLI
-text are English. Follow normal Markdown link semantics.
+Preserve human explanations in ENTRY.md and derived freshness evidence in
+state.json. Commands never execute project code, fetch remote links, discover
+unregistered files recursively or read credentials. Preserve existing guides and
+unrelated work. Follow the bounded Markdown dialect in docs/reference.md.
 
-Use Python standard library only unless a demonstrated requirement warrants a
-dependency. Run project-check fast. Package builds and broader integration checks
-are separate workloads justified by packaging or host changes; never activate a
-host as a side effect. Keep a concise development checkpoint in README.md.
+Use native Rust with `#![forbid(unsafe_code)]`. Keep dependencies small, public,
+licensed and locked. JavaScript, shell and PowerShell are distribution adapters;
+they must not implement a second guide engine. Python is not a build, runtime,
+packaging or regular-test dependency.
 
-- Task-scoped staging is authorized. After review and required checks, commit
-  the task changes and push to the current branch's existing upstream. Preserve
-  unrelated work.
-- Deployment, activation, installation, releases, visibility changes and history
-  rewrites require separate authorization.
+Run `cargo fmt --all -- --check`, `cargo clippy --locked --all-targets -- -D warnings`
+and `cargo test --locked` for source changes; `just check` is equivalent. Packaging
+changes also require a Cargo package verification and an affected local package
+smoke test. Keep temporary outputs outside the checkout. Never regenerate frozen
+compatibility expectations to hide a behavior change.
+
+Keep factual verification status in docs/verification.md. Publication, registry
+names, history changes and installation on an operator's system are separate
+from local development and artifact verification.

@@ -1,0 +1,21 @@
+usage: tabula [-h] [--version]
+                  {init,update,check,doctor,context,test-snapshot,import-test} ...
+
+Keep a short guide to your repository and find explanations that need review.
+
+positional arguments:
+  {init,update,check,doctor,context,test-snapshot,import-test}
+    init                Create a starter guide from the repository's declaring
+                        files.
+    update              Record current file hashes after editing your guide.
+    check               Report source changes that may make your guide
+                        outdated.
+    doctor              Explain missing files, invalid links and size limits.
+    context             Select guide sections related to specific source
+                        files.
+    test-snapshot       Describe the source inputs for a separately run test.
+    import-test         Record a caller-supplied test result from stdin.
+
+options:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit

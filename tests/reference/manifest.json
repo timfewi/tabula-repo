@@ -1,0 +1,28 @@
+{
+  "python": "3.15.0",
+  "unicode": "17.0.0",
+  "environment": {
+    "LC_ALL": "C.UTF-8",
+    "COLUMNS": "80",
+    "PYTHONHASHSEED": "0",
+    "NO_COLOR": "1",
+    "TERM": "dumb"
+  },
+  "sha256": {
+    "tabula.py": "add7f11ba3447687371ad551435b8a8c76a8b8bb83496dedc5fcdf93672bdb64",
+    "tabula/__init__.py": "4b9ffb4a3157a8323061b21d98b05f40cd1f115e8f1664bfa2dc509659fc6dbd",
+    "tabula/cards.py": "14353fd992b0bef27ce63dbf17f036af1ea669a6ba56580681784d081b5337ef",
+    "tabula/cli.py": "9ee728c6dda71114d1567f56bb91a7ab29b804db4ac38b7335730b2e0a800f0a",
+    "tabula/context.py": "f8d464207175365b80f91ee36c421e9d24bca9f53a739b2dedb0f9227106c2c5",
+    "tabula/evidence.py": "a338826b2e967f60fa23cad18c619b012ab316a3a58f4f2299c57b07c953f136",
+    "tabula/limits.py": "5c076c17b82873e9ad1d7c15f0715ce52576f38735eca49b9d4b0b283fc0d298",
+    "tabula/markdown.py": "d2d98f56a865d229d8fb7aabaedf68650f44ed49037268a61895978180f111e4",
+    "tabula/operations.py": "6df608bcf67fee2277f7fcac960272cefb27d68469c038bcfd7148d3c3fffac4",
+    "tabula/receipts.py": "13dff731040c42318ce26d6b667abae8576d8a4646514c4c2e6525e7278e48bd",
+    "tabula/storage.py": "a5e8ac8a08fd558a4b679587ae5345ff23f41c8c9926cd08e77d4bae1f37b0bb",
+    "tests/test_context.py": "4d3ec827992fc64841b55a8ac7d6c944272c6eaf47b0440d19c68c537bb609f4",
+    "tests/test_evidence.py": "0396c2119f98155c21baaa97fa4bdc58e6ee31b17ebff28baeac938107d7335d",
+    "tests/test_tabula.py": "b259cda8fb6b94e3b9a09dae52553b74c3d90251c0706b1298899bf3e5a13f7b"
+  },
+  "approved_delta": "Product and CLI naming corrected to Tabula and tabula; repository and crate named tabula-repo."
+}
