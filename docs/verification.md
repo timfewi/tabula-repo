@@ -81,6 +81,12 @@ Windows CLI byte mismatches on commit `7532d2f`. FIFO fixtures now use POSIX
 `mkfifo`, with an explicit file-type and mode test. Embedded help has an LF
 checkout rule. A local `core.autocrlf=true` checkout reproduced the CLI failure
 before that rule and passed the unchanged frozen CLI test after it.
+The next hosted run passed Rust checks on every target and exposed two later
+adapter failures: CRLF `tar` listings on Windows and a symlinked temporary
+directory on macOS. Crate-member parsing accepts LF and CRLF while retaining
+the same allowlist; native adapter tests cover both valid and rejected members.
+The package smoke canonicalizes only its own temporary directory, not installer
+inputs, and retains explicit symlink-prefix and symlink-ancestor refusal tests.
 
 Hosted platform results must be checked for the exact commit in
 [GitHub Actions](https://github.com/timfewi/tabula-repo-nix/actions/workflows/check.yml).

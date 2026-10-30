@@ -47,6 +47,8 @@ jobs:
         run: cargo test --locked
       - name: Crate verification
         run: cargo package --locked
+      - name: Packaging adapter tests
+        run: node --test packaging/check-crate.test.mjs
       - name: Crate allowlist
         run: node packaging/check-crate.mjs target/package/tabula-repo-0.1.0.crate
       - name: Native release build

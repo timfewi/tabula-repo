@@ -1,5 +1,5 @@
 // Run reviewed local artifacts outside the checkout. No registry or global install.
-import { mkdtempSync, rmSync, mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync, symlinkSync } from 'node:fs';
+import { mkdtempSync, realpathSync, rmSync, mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync, symlinkSync } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const packages = resolve(process.argv[2]);
-const temporary = mkdtempSync(join(tmpdir(), 'tabula-smoke-'));
+const temporary = realpathSync(mkdtempSync(join(tmpdir(), 'tabula-smoke-')));
 const windows = process.platform === 'win32';
 function run(program, args, options = {}, expected = 0) {
   const p = spawnSync(program, args, { cwd: temporary, encoding: 'utf8', ...options });
@@ -80,6 +80,8 @@ try {
     assert(!existsSync(prefix));
     const linkedPrefix = join(temporary, 'linked'); symlinkSync(project, linkedPrefix);
     run('sh', [installer, '0.1.0', archive, hash, linkedPrefix], {}, 2);
+    run('sh', [installer, '0.1.0', archive, hash, join(linkedPrefix, 'child')], {}, 2);
+    assert(!existsSync(join(project, 'child')));
     const shim = join(temporary, 'failure-tools'); mkdirSync(shim);
     writeFileSync(join(shim, 'cat'), '#!/bin/sh\nexit 1\n', { mode: 0o755 });
     const failedPrefix = join(temporary, 'failed-install');
