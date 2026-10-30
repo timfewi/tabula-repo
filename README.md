@@ -85,7 +85,7 @@ candidates, not a claim that an official package is published.
 | Route | Local use |
 | --- | --- |
 | Cargo | `cargo install --path . --locked` builds the native `tabula` command. |
-| Nix | `nix run .#tabula -- --help`; `nix develop` provides an optional development environment. |
+| Nix | `nix run .#tabula -- --help`; `devenv shell` reuses the locked development shell; `nix develop` remains available. |
 | npm / Bun | Pack the main package and the matching native platform package, then install both local tarballs. See [packaging](docs/packaging.md). |
 | Linux / macOS archive | `sh install.sh VERSION ARCHIVE CHECKED_SHA256 /absolute/unused-prefix` |
 | Windows archive | `./install.ps1 -Version VERSION -Archive ARCHIVE -Sha256 CHECKED_SHA256 -Prefix C:\path\to\unused-directory` |
@@ -117,6 +117,11 @@ A `.project-checks.json` in a user's project remains an ordinary declaring file
 for `init`. Tabula can cite and hash it; it never invokes a runner from it.
 
 ## Development and privacy
+
+Native `devenv.nix` reuses the locked Flake shell with Git-filtered inputs, not
+the former whole-tree `path:.` snapshot. Stage authorized new source files before
+Flake evaluation; ignored caches stay outside the source snapshot. Automatic
+native activation requires owner approval; `devenv shell -- <command>` is explicit.
 
 ```sh
 cargo fmt --all -- --check
