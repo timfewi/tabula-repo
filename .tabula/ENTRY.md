@@ -24,5 +24,7 @@ The [Nix flake](../flake.nix) uses one public pinned input. The
 archives and refuse overwrites. The [replay tests](../tests/reference.rs) compare
 frozen behavior and use POSIX `mkfifo` for named-pipe fixtures; the
 [checkout rule](../.gitattributes) preserves embedded help bytes on Windows.
-[Verification](../docs/verification.md) distinguishes local results from hosted
-platform results and unexecuted publication checks.
+Automatic [CI](../.github/workflows/check.yml) runs only Ubuntu x86-64/ARM64,
+using Bun 1.4.2 for JavaScript adapters and Node.js 26 for npm compatibility.
+macOS and Windows remain manual build targets. [Verification](../docs/verification.md)
+distinguishes local results from hosted results and unexecuted publication checks.

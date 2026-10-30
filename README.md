@@ -78,9 +78,9 @@ cards, Markdown syntax, limits and receipt migration.
 
 ## Build and installation routes
 
-Version **0.1.0** is prepared locally under the MIT license. Registry names and
-the public release repository are not confirmed. The names in manifests are
-candidates, not a claim that an official package is published.
+Version **0.1.0** is prepared locally under the MIT license. The source repository
+is [timfewi/tabula-repo-nix](https://github.com/timfewi/tabula-repo-nix). Registry
+names in manifests are candidates, not a claim that an official package is published.
 
 | Route | Local use |
 | --- | --- |
@@ -101,9 +101,11 @@ has no download hook, interpreter embedding or compilation fallback. Node 22+
 or Bun runs the launcher; Cargo and Nix run the binary directly.
 
 Targets are Linux and macOS on x86-64 and ARM64, and Windows x86-64. Linux release
-binaries use musl. Native CI jobs are defined for each target; local verification
-and platform limitations are recorded in [verification](docs/verification.md).
-A declared target is not evidence that its hosted CI has already passed.
+binaries use musl. Automatic CI runs only on Ubuntu x86-64 and ARM64, using
+Bun 1.4.2 for JavaScript adapters and Node.js 26 for npm compatibility checks.
+macOS and Windows remain manual build targets to avoid paid runner costs.
+Verification results and remaining platform gaps are recorded in
+[verification](docs/verification.md). A declared target is not proof of a successful build.
 
 ## Existing guides
 

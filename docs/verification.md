@@ -75,7 +75,10 @@ These are separate evidence scopes:
   checklist (54 files, including native binaries). The release-directory secret
   scan reported no findings in the text it scanned; this is not a binary audit.
 
-Native CI definitions target Linux and macOS x86-64/ARM64 and Windows x86-64.
+Automatic CI is intentionally limited to Ubuntu 24.04 x86-64 and ARM64 to avoid
+macOS/Windows runner costs. Bun 1.4.2 runs JavaScript adapters and tests; Node.js 26
+is retained for npm launcher compatibility. Actions are pinned to commit hashes,
+checkout credentials are not persisted, and tool caches are disabled.
 The publication review found macOS replay-fixture compilation failures and
 Windows CLI byte mismatches on commit `7532d2f`. FIFO fixtures now use POSIX
 `mkfifo`, with an explicit file-type and mode test. Embedded help has an LF
@@ -88,10 +91,14 @@ the same allowlist; native adapter tests cover both valid and rejected members.
 The package smoke canonicalizes only its own temporary directory, not installer
 inputs, and retains explicit symlink-prefix and symlink-ancestor refusal tests.
 
-Hosted platform results must be checked for the exact commit in
+The earlier five-target run on `da3ef2a` passed both Linux and both macOS jobs.
+Windows passed Rust and crate checks, but its package smoke could not locate
+the Bun executable. Its installer path therefore remains unverified. macOS and
+Windows builds now require explicit manual verification rather than automatic CI.
+
+Hosted Ubuntu results must be checked for the exact commit in
 [GitHub Actions](https://github.com/timfewi/tabula-repo-nix/actions/workflows/check.yml).
-Native macOS/Windows installation has not been exercised locally. Registry
-ownership and publication remain unverified. The owner-approved source
+Registry ownership and publication remain unverified. The owner-approved source
 destination is `timfewi/tabula-repo-nix`; source visibility is separate from
 package publication. No package release or host activation is part of this
 verification. Rust, successful tests and static scans alone are not a safety proof.

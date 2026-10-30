@@ -28,6 +28,11 @@ same `tabula` executable.
 | `aarch64-apple-darwin` | macOS ARM64 | `.tar.gz` |
 | `x86_64-pc-windows-msvc` | Windows x86-64 | `.zip` |
 
+Automatic CI covers only the two Ubuntu Linux targets, with Bun 1.4.2 as the
+adapter/test runner and Node.js 26 for npm launcher compatibility. macOS and
+Windows packaging is manual; arrange those native runners explicitly before
+claiming a verified release for those targets.
+
 Build on the matching native runner with the appropriate Rust target, then:
 
 ```sh

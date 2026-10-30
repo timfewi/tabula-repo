@@ -10,6 +10,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const packages = resolve(process.argv[2]);
 const temporary = realpathSync(mkdtempSync(join(tmpdir(), 'tabula-smoke-')));
 const windows = process.platform === 'win32';
+const runtimes = ['bun', 'node'];
 function run(program, args, options = {}, expected = 0) {
   const p = spawnSync(program, args, { cwd: temporary, encoding: 'utf8', ...options });
   assert.equal(p.status, expected, `${program}: ${p.error ?? ''}\n${p.stdout}\n${p.stderr}`);
@@ -35,7 +36,7 @@ try {
   const launcher = join(app, 'package/bin/tabula.mjs');
   const project = join(temporary, 'project'); mkdirSync(project);
   writeFileSync(join(project, 'README.md'), '# Example\n');
-  for (const runtime of [process.execPath, 'bun']) {
+  for (const runtime of runtimes) {
     assert.equal(run(runtime, [launcher, '--version']).stdout, 'Tabula 0.1.0\n');
   }
   const binary = join(module, windows ? 'tabula.exe' : 'tabula');
@@ -46,7 +47,7 @@ try {
   assert.equal(JSON.parse(run(binary, ['check', '.', '--json'], isolated, 1).stdout).status, 'stale');
   const manifestPath = join(module, 'package.json');
   writeFileSync(manifestPath, JSON.stringify({ ...platform, version: '0.0.0' }));
-  run(process.execPath, [launcher, '--version'], {}, 2);
+  for (const runtime of runtimes) run(runtime, [launcher, '--version'], {}, 2);
   writeFileSync(manifestPath, JSON.stringify(platform));
   const archiveName = readdirSync(packages).find(name => name.endsWith(windows ? '.zip' : '.tar.gz'));
   assert(archiveName);
@@ -95,6 +96,6 @@ try {
     assert.equal(run(join(prefix, 'bin/tabula'), ['--version'], isolated).stdout, 'Tabula 0.1.0\n');
   }
   rmSync(module, { recursive: true });
-  run(process.execPath, [launcher, '--version'], {}, 2);
+  for (const runtime of runtimes) run(runtime, [launcher, '--version'], {}, 2);
   console.log('Native CLI, npm tarballs, Node/Bun, installer, checksum, overwrite and missing/version refusal checks passed.');
 } finally { rmSync(temporary, { recursive: true, force: true }); }
