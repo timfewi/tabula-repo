@@ -97,8 +97,8 @@ the Bun executable. Its installer path therefore remains unverified. macOS and
 Windows builds now require explicit manual verification rather than automatic CI.
 
 Hosted Ubuntu results must be checked for the exact commit in
-[GitHub Actions](https://github.com/timfewi/tabula-repo-nix/actions/workflows/check.yml).
+[GitHub Actions](https://github.com/timfewi/tabula-repo/actions/workflows/check.yml).
 Registry ownership and publication remain unverified. The owner-approved source
-destination is `timfewi/tabula-repo-nix`; source visibility is separate from
+destination is `timfewi/tabula-repo`; source visibility is separate from
 package publication. No package release or host activation is part of this
 verification. Rust, successful tests and static scans alone are not a safety proof.

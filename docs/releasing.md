@@ -2,7 +2,7 @@
 
 The Cargo/npm package name is `tabula-repo`. The product and CLI are Tabula and
 `tabula`, in homage to *tabula rasa*. The source repository is
-[timfewi/tabula-repo-nix](https://github.com/timfewi/tabula-repo-nix).
+[timfewi/tabula-repo](https://github.com/timfewi/tabula-repo).
 Registry ownership remains a package-publication prerequisite.
 
 1. Confirm ownership and availability of `tabula-repo` and its exact-version npm

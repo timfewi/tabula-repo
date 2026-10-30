@@ -79,7 +79,7 @@ cards, Markdown syntax, limits and receipt migration.
 ## Build and installation routes
 
 Version **0.1.0** is prepared locally under the MIT license. The source repository
-is [timfewi/tabula-repo-nix](https://github.com/timfewi/tabula-repo-nix). Registry
+is [timfewi/tabula-repo](https://github.com/timfewi/tabula-repo). Registry
 names in manifests are candidates, not a claim that an official package is published.
 
 | Route | Local use |
