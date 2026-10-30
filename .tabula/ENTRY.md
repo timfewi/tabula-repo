@@ -22,5 +22,7 @@ The [Nix flake](../flake.nix) uses one public pinned input. The
 [packaging](../packaging/build.mjs) takes an already-built native binary.
 [Shell](../install.sh) and [PowerShell](../install.ps1) installers verify local
 archives and refuse overwrites. The [replay tests](../tests/reference.rs) compare
-frozen behavior. [Verification](../docs/verification.md) distinguishes local
-results from unexecuted platform and publication checks.
+frozen behavior and use POSIX `mkfifo` for named-pipe fixtures; the
+[checkout rule](../.gitattributes) preserves embedded help bytes on Windows.
+[Verification](../docs/verification.md) distinguishes local results from hosted
+platform results and unexecuted publication checks.

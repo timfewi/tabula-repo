@@ -36,6 +36,10 @@ Use `--allow-dirty` only for local review of uncommitted work; releases must use
 a reviewed clean checkout. `just check` runs formatting, Clippy and tests.
 Packaging verification is described in docs/packaging.md.
 
+On Unix, replay tests use the standard POSIX `mkfifo` utility to create named-pipe
+fixtures without a shell. Embedded CLI help is checked out with LF endings on
+every platform so the frozen byte comparisons also apply on Windows.
+
 Frozen fixtures came from the reviewed Python working tree, including the
 interim rebrand, under Python 3.15.0 and Unicode 17.0.0. Its source hashes and
 controlled environment are recorded in tests/reference/manifest.json. The old

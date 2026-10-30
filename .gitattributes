@@ -1,0 +1,2 @@
+# Embedded CLI help is compared byte-for-byte with the frozen reference.
+/src/help/*.txt text eol=lf

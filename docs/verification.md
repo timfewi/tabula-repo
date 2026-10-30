@@ -63,10 +63,10 @@ These are separate evidence scopes:
   could not fully parse the shell installer. It reported no findings in parsed
   adapters and has no configured Rust rules. ShellCheck and installer tests
   passed separately; they do not substitute for a complete security review.
-- **History:** the secret scan covered all eight existing commits and found no
-  credentials. Historical infrastructure references and three author/committer
-  identities remain. They require a separate publication decision; no history
-  rewrite was performed.
+- **History:** the pre-repair publication scan covered all ten then-reachable
+  commits (about 2.08 MB) and found no credentials. Historical infrastructure
+  references and GitHub no-reply author/committer identities remain. The owner
+  approved publishing the existing history; no history rewrite was performed.
 - **Artifacts:** runtime archives and npm packages use explicit file allowlists;
   crate packaging is also checked against its own allowlist. Local receipts,
   Python files, caches and development environments are excluded. Artifact
@@ -76,7 +76,16 @@ These are separate evidence scopes:
   scan reported no findings in the text it scanned; this is not a binary audit.
 
 Native CI definitions target Linux and macOS x86-64/ARM64 and Windows x86-64.
-Hosted execution, native macOS/Windows installation and registry publication
-remain unverified locally. Registry ownership and the destination repository
-still need review. No repository visibility, release or host activation was
-changed. Rust, successful tests and static scans alone are not a safety proof.
+The publication review found macOS replay-fixture compilation failures and
+Windows CLI byte mismatches on commit `7532d2f`. FIFO fixtures now use POSIX
+`mkfifo`, with an explicit file-type and mode test. Embedded help has an LF
+checkout rule. A local `core.autocrlf=true` checkout reproduced the CLI failure
+before that rule and passed the unchanged frozen CLI test after it.
+
+Hosted platform results must be checked for the exact commit in
+[GitHub Actions](https://github.com/timfewi/tabula-repo-nix/actions/workflows/check.yml).
+Native macOS/Windows installation has not been exercised locally. Registry
+ownership and publication remain unverified. The owner-approved source
+destination is `timfewi/tabula-repo-nix`; source visibility is separate from
+package publication. No package release or host activation is part of this
+verification. Rust, successful tests and static scans alone are not a safety proof.

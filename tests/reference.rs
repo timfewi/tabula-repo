@@ -36,16 +36,30 @@ fn prepare(root: &Path, tree: &Value, blobs: &Value) {
             }
         } else if v["fifo"] == true {
             #[cfg(unix)]
-            rustix::fs::mknodat(
-                rustix::fs::CWD,
-                &path,
-                rustix::fs::FileType::Fifo,
-                rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
-                0,
-            )
-            .unwrap();
+            {
+                let status = std::process::Command::new("mkfifo")
+                    .args(["-m", "600"])
+                    .arg(&path)
+                    .status()
+                    .expect("POSIX mkfifo is required to prepare FIFO fixtures");
+                assert!(status.success(), "could not create FIFO fixture");
+            }
         }
     }
+}
+#[cfg(unix)]
+#[test]
+fn fifo_fixture_is_a_private_named_pipe() {
+    use std::os::unix::fs::{FileTypeExt, PermissionsExt};
+    let temp = tempfile::tempdir().unwrap();
+    prepare(
+        temp.path(),
+        &serde_json::json!({"pipe": {"fifo": true}}),
+        &Value::Null,
+    );
+    let metadata = fs::symlink_metadata(temp.path().join("pipe")).unwrap();
+    assert!(metadata.file_type().is_fifo());
+    assert_eq!(metadata.permissions().mode() & 0o777, 0o600);
 }
 fn strings(v: &Value) -> Vec<String> {
     v.as_array()
