@@ -46,6 +46,16 @@ The following checks passed on Linux x86-64 during the migration:
 No model run or performance benchmark was performed. Tool availability is not
 proof that every platform or integration works.
 
+The Renovate platform-package exclusion passed local JSON and structural
+regression assertions: it names exactly the five optional platform dependencies,
+applies only to the npm manager, preserves the recommended preset and excludes
+no unrelated package names. The unchanged configuration failed those assertions.
+Cargo formatting, Clippy with warnings denied and all 59 Rust tests also passed.
+The rule was checked against Renovate 44.188.0 documentation; neither the official
+Renovate validator nor a hosted Renovate run was executed locally. Dashboard
+warning removal remains unverified until the configuration reaches GitHub and
+Renovate runs again.
+
 ## Security and publication review
 
 These are separate evidence scopes:
