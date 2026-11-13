@@ -1,0 +1,11 @@
+usage: tabula view [-h] [--json] [--open] [root]
+
+Generate an offline HTML table of the current guide state without updating its receipt.
+
+positional arguments:
+  root
+
+options:
+  -h, --help  show this help message and exit
+  --json
+  --open      ask the system browser to open .tabula/index.html

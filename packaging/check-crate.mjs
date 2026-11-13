@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-const allowed = /^(?:\.cargo_vcs_info\.json|Cargo\.(?:toml(?:\.orig)?|lock)|LICENSE|README\.md|THIRD_PARTY_LICENSES|docs\/reference\.md|src\/[a-z_]+\.rs|src\/help\/[a-z-]+\.txt|tests\/[a-z_]+\.rs|tests\/reference\/[a-z-]+\.(?:json|sha256))$/;
+const allowed = /^(?:\.cargo_vcs_info\.json|Cargo\.(?:toml(?:\.orig)?|lock)|LICENSE|README\.md|THIRD_PARTY_LICENSES|docs\/reference\.md|src\/[a-z_]+\.rs|src\/view\.html|src\/help\/[a-z-]+\.txt|tests\/[a-z_]+\.rs|tests\/reference\/[a-z-]+\.(?:json|sha256))$/;
 export function checkCrateMembers(listing) {
   const names = listing.trim().split(/\r?\n/);
   for (const name of names) {

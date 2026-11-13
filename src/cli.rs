@@ -8,6 +8,7 @@ const COMMANDS: &[&str] = &[
     "context",
     "test-snapshot",
     "import-test",
+    "view",
 ];
 fn help(command: &str) -> &'static str {
     match command {
@@ -18,6 +19,7 @@ fn help(command: &str) -> &'static str {
         "context" => include_str!("help/context.txt"),
         "test-snapshot" => include_str!("help/test-snapshot.txt"),
         "import-test" => include_str!("help/import-test.txt"),
+        "view" => include_str!("help/view.txt"),
         _ => include_str!("help/main.txt"),
     }
 }
@@ -110,6 +112,7 @@ pub fn run(args: &[String], input: &[u8]) -> (i32, String, String) {
     let mut review = vec![];
     let mut upgrade = false;
     let mut as_json = false;
+    let mut open = false;
     let mut max_bytes = None;
     let mut unknown = vec![];
     let mut i = 1;
@@ -137,6 +140,7 @@ pub fn run(args: &[String], input: &[u8]) -> (i32, String, String) {
             "update" => options.extend(["--upgrade", "--review"]),
             "context" => options.extend(["--files", "--max-bytes"]),
             "test-snapshot" => options.push("--files"),
+            "view" => options.push("--open"),
             _ => {}
         }
         let matches: Vec<_> = options
@@ -158,7 +162,7 @@ pub fn run(args: &[String], input: &[u8]) -> (i32, String, String) {
                 ),
             );
         }
-        if !positional && ["--help", "--json", "--upgrade"].contains(&option) {
+        if !positional && ["--help", "--json", "--upgrade", "--open"].contains(&option) {
             if let Some(value) = &inline {
                 return parse_error(
                     command,
@@ -176,6 +180,8 @@ pub fn run(args: &[String], input: &[u8]) -> (i32, String, String) {
             as_json = true;
         } else if !positional && option == "--upgrade" && command == "update" {
             upgrade = true;
+        } else if !positional && option == "--open" && command == "view" {
+            open = true;
         } else if !positional
             && ((option == "--purpose" && command == "init")
                 || (option == "--max-bytes" && command == "context"))
@@ -279,6 +285,23 @@ pub fn run(args: &[String], input: &[u8]) -> (i32, String, String) {
             "context" => context::context(&root, &files, max_bytes.unwrap(), as_json),
             "test-snapshot" => evidence::test_snapshot(&root, &files),
             "import-test" => evidence::import_test(&root, input),
+            "view" => {
+                if !storage::safe_path(&root, ".tabula")?.is_dir() {
+                    return Err(Error::new("no Tabula guide; use tabula init first"));
+                }
+                project::prepare(&root)?;
+                let mut result = view::write(&root)?;
+                if open {
+                    match open_view(&root) {
+                        Ok(()) => result["browser"] = json!("requested"),
+                        Err(_) => {
+                            result["browser"] = json!("unavailable");
+                            result["hint"] = json!("Open .tabula/index.html in your browser; the HTML was generated successfully.");
+                        }
+                    }
+                }
+                Ok(result)
+            }
             _ => unreachable!(),
         }
     })();
@@ -306,6 +329,33 @@ pub fn run(args: &[String], input: &[u8]) -> (i32, String, String) {
         );
     }
     (code, output, String::new())
+}
+
+fn open_view(root: &std::path::Path) -> std::io::Result<()> {
+    let path = root.join(view::OUTPUT);
+    // Use a fixed OS launcher with one path argument; never invoke a shell or
+    // evaluate a project command. Generation itself remains interpreter-free.
+    #[cfg(target_os = "macos")]
+    let mut command = std::process::Command::new("/usr/bin/open");
+    #[cfg(target_os = "windows")]
+    let mut command = {
+        let mut command = std::process::Command::new("rundll32.exe");
+        command.arg("url.dll,FileProtocolHandler");
+        command
+    };
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    let mut command = std::process::Command::new("xdg-open");
+    let status = command
+        .arg(path)
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err(std::io::Error::other("browser launcher failed"))
+    }
 }
 pub fn main() -> i32 {
     let args = std::env::args().skip(1).collect::<Vec<_>>();

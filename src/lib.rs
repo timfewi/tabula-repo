@@ -7,8 +7,10 @@ pub mod evidence;
 mod json;
 pub mod markdown;
 pub mod operations;
+pub mod project;
 pub mod receipts;
 pub mod storage;
+pub mod view;
 pub(crate) use serde_json::{json, Map, Value as V};
 pub(crate) use storage::{Error, Result};
 pub(crate) fn obj() -> V {

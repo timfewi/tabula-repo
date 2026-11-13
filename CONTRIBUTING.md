@@ -10,6 +10,8 @@ checkout is needed. Nix and Just are optional conveniences.
 | --- | --- |
 | `src/cli.rs`, `src/help/` | Arguments, help, command dispatch and exit codes. |
 | `src/operations.rs` | Initialization, updates, freshness checks and diagnosis. |
+| `src/project.rs` | Bounded, preserving Gitignore and Justfile integration. |
+| `src/view.rs`, `src/view.html` | Offline HTML snapshot using the shared inspection and receipt engine. |
 | `src/markdown.rs` | The bounded Markdown evidence dialect. |
 | `src/cards.rs` | Registered cards, graph traversal and source snapshots. |
 | `src/receipts.rs` | Receipt versions, schema validation and persistence. |

@@ -12,8 +12,8 @@ All 47 original core tests passed. Their operations and CLI invocations produced
 257 frozen replay cases, grouped into the corresponding 47 native Rust tests.
 The replay compares complete JSON and text outputs, stderr, exit codes, file
 inventories and expected file bytes. The owner explicitly corrected product and
-CLI naming to Tabula and tabula; that naming delta is the only approved output
-adjustment. Context budgets, receipt formats and hashes retain the reference
+CLI naming to Tabula and tabula; that naming delta was the only output adjustment
+during the migration. Context budgets, receipt formats and hashes retain the reference
 behavior. Expectations were not sorted or whitespace-normalized.
 
 Another 32 frozen CLI cases cover help, errors, abbreviated options and integer
@@ -21,6 +21,13 @@ arguments. Native tests cover atomic-write refusal, independent binary execution
 source-read deduplication, non-finite JSON, deep nesting, UTF-16/32 JSON and unsafe
 Unicode paths. A complete scalar-value digest checks case-folding, word and
 printable characters, whitespace and decimal digits against Unicode 17.0.0.
+
+The requested HTML overview adds an explicit compatibility extension: main
+help and command-choice errors list `view`, and successful initialization and
+updates additionally create `.gitignore` rules and `.tabula/index.html`.
+The replay harness checks those additions separately, then compares the original
+inventory and bytes. Frozen fixtures remain unchanged. No existing receipt,
+card, freshness, review, context-budget or test-evidence expectation is renewed.
 
 The old engine is not shipped or used by regular tests. POSIX FIFO/symlink replay
 cases are scoped to POSIX; Windows has native reparse-point, device-name,
@@ -48,6 +55,38 @@ proof that every platform or integration works.
 
 A later local run also passed Cargo formatting, Clippy with warnings denied
 and all 59 Rust tests.
+
+## HTML overview and scaffold integration
+
+Local Linux x86-64 verification for the HTML feature passed formatting, Clippy
+with warnings denied and all 83 Rust tests. New tests cover automatic integration,
+idempotence, existing recipes and same-name variables, LF/CRLF, file permissions,
+unsafe targets, final Justfile hashes during initialization and updates, stale
+views without receipt writes, missing/malformed receipts, escaped guide markup,
+review/test separation and unavailable browser fallback.
+
+Cargo package verification, the 44-file crate allowlist, its four Node tests and
+a standalone packaged-binary smoke test passed. The embedded view works without
+the source template alongside the binary. No npm registry publication, Nix
+build, macOS/Windows execution or installation on the owner's machine was run
+for this feature.
+
+Real Chromium checked the generated views for Tabula and the scaffolder at
+1440×1100 and 390×844, including search, empty search results, freshness filters,
+guide expansion, keyboard focus and a JavaScript-disabled view. Stale, missing
+source and missing baseline fixtures displayed their respective states. There
+were no page exceptions, external requests or document-level horizontal overflow.
+Narrow tables scroll internally. The managed browser blocks `file://` navigation
+with `ERR_BLOCKED_BY_ADMINISTRATOR`, so runtime checks used identical HTML through
+a local read-only HTTP server; direct local-file opening remains unverified in
+this environment.
+
+All four generated scaffold templates were exercised with the native CLI through
+update, current check, the actual Just recipe, a source edit and stale check/view.
+Generated files were ignored by Git and viewing preserved the receipt bytes.
+The scaffolder's 27 focused Python/Just tests and template integrity passed.
+Its full Nix/formatter gate remains unavailable here because Nix, nixfmt, Biome
+and project-check are not installed.
 
 ## Security and publication review
 

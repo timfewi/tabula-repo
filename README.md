@@ -14,7 +14,7 @@ that file changes, `tabula check` reports the affected explanation. Tabula does
 not infer what changed or rewrite your prose.
 
 Tabula is a native Rust library and command-line program. It runs offline without
-Python, an account, API key, AI model, service or Nix installation. Its seven
+Python, an account, API key, AI model, service or Nix installation. Its eight
 commands do not execute project code or fetch linked URLs.
 
 ## Try it
@@ -52,9 +52,24 @@ It does not read files or contact a server.
 
 Links are relative to the card: `../src/greet.js` points from `.tabula` into `src`.
 The [learning example](examples/hello/README.md) is ready to copy into a temporary
-folder. Commit the guide; add `/.tabula/state.json` to the project's `.gitignore`
-for the generated local receipt. Tabula does not change ignore rules or commit
-anything for you.
+folder. Commit the guide. `init` and `update` generate a local receipt and an
+offline HTML overview, and add `/.tabula/state.json` and `/.tabula/index.html`
+to the project's `.gitignore`, preserving existing rules. If a Justfile exists,
+Tabula adds `just tabula-view` without replacing an existing recipe. It never
+stages or commits files.
+
+Open `.tabula/index.html` directly in your browser, or refresh and open it with:
+
+```sh
+tabula view . --open
+# In projects with a Justfile:
+just tabula-view
+```
+
+The paper-like table shows registered cards and sections, cited files, byte
+freshness, review assertions and test evidence. It needs no server, network or
+external assets. It is a snapshot: rerun `view` after source changes to see their
+effect. Viewing preserves the receipt and never acknowledges a review.
 
 **Fresh hashes do not prove that an explanation is correct or that tests passed.**
 Review the prose and run tests separately.
@@ -70,6 +85,7 @@ Review the prose and run tests separately.
 | `tabula context . --files src/greet.js --max-bytes 4000` | Select complete relevant sections within a UTF-8 byte budget. |
 | `tabula test-snapshot . --files src/greet.js --json` | Describe source hashes for a separately run test. |
 | `tabula import-test . --json < result.json` | Record caller-supplied test metadata. |
+| `tabula view . --open` | Refresh the offline HTML table and request opening it in your browser. |
 
 Add `--json` for scripts. `check` exits 0 for current bytes, 1 for stale bytes and
 2 for invalid input. Review acknowledgements and test assertions remain separate
