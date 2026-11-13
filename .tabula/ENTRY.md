@@ -6,13 +6,24 @@ Tabula creates and checks portable repository guides. Start with the
 
 ## Guide engine
 
-The [CLI](../src/cli.rs) dispatches seven explicit commands to the Rust library.
+The [CLI](../src/cli.rs) dispatches eight explicit commands to the Rust library.
 [Operations](../src/operations.rs) keep freshness, review and caller-supplied test
 assertions separate. The [card reader](../src/cards.rs) resolves registered cards
 using the bounded [Markdown parser](../src/markdown.rs).
 [Receipts](../src/receipts.rs) retain versions 1–3 and explicit migration.
 [Context selection](../src/context.rs) preserves whole sections within byte budgets.
 [Storage](../src/storage.rs) bounds reads and refuses unsafe evidence paths.
+
+## Human overview
+
+The [HTML renderer](../src/view.rs) uses the same card inspection and receipt
+comparison to show section freshness, review assertions and test evidence in
+an offline [table](../src/view.html). The generated page is a snapshot and never
+updates the receipt. The [project integration](../src/project.rs) preserves
+existing ignore rules and Just recipes while adding local-output exclusions
+and an optional `just tabula-view` shortcut. Initialization and updates refresh
+the page automatically; viewing after source changes leaves stale evidence
+visible until an explicit update.
 
 ## Distribution and verification
 

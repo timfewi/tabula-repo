@@ -175,6 +175,34 @@ fn run_reference_test(test: &str) {
             .keys()
             .cloned()
             .collect::<BTreeSet<_>>();
+        // Automatic project integration is an explicit additive filesystem
+        // contract. Preserve every frozen receipt/card/output comparison; only
+        // successful init/update may add these two newly generated local files.
+        let generated = match op {
+            "initialize" | "update" => case.get("error").is_none(),
+            "cli" => case["code"] == 0 && matches!(args[0].as_str(), Some("init" | "update")),
+            _ => false,
+        };
+        if generated {
+            assert_eq!(
+                fs::read_to_string(root.join(".gitignore")).unwrap(),
+                concat!(
+                    "# Generated Tabula files (local to this checkout).\n",
+                    "/.tabula/state.json\n",
+                    "/.tabula/index.html\n",
+                ),
+                "case {index}: generated ignore rules differ",
+            );
+            let html = fs::read_to_string(root.join(".tabula/index.html")).unwrap();
+            assert!(
+                html.contains("<html"),
+                "case {index}: missing HTML document"
+            );
+            assert!(html.contains("Tabula"), "case {index}: missing Tabula view");
+            for name in [".gitignore", ".tabula/index.html"] {
+                assert!(actual_paths.remove(name), "case {index}: missing {name}");
+            }
+        }
         if actual_paths != expected_paths {
             failures.push(format!("case {index} {op}: filesystem inventory differs"));
         }

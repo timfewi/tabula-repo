@@ -1,6 +1,27 @@
 use crate::*;
 use crate::{evidence::test_states, receipts::*, storage::*};
 use std::{collections::BTreeSet, io::Write, path::Path};
+
+// Keep the receipt's previous bytes when a derived view cannot be written.
+fn write_with_view(root: &Path, state: &V) -> Result<()> {
+    let path = safe_path(root, ".tabula/state.json")?;
+    let previous = if path.exists() {
+        Some(read_file(&path, 512000)?)
+    } else {
+        None
+    };
+    write_receipt(root, state)?;
+    if let Err(error) = view::write(root) {
+        if let Some(bytes) = previous {
+            write_atomic(root, ".tabula/state.json", &bytes)?;
+        } else {
+            std::fs::remove_file(safe_path(root, ".tabula/state.json")?)?;
+        }
+        return Err(error);
+    }
+    Ok(())
+}
+
 pub fn initialize(root: &Path, purpose: &str) -> Result<V> {
     if purpose.trim_matches(compat::is_space).is_empty() || purpose.contains(['\n', '\r']) {
         return Err(Error::new("purpose must be a nonempty single line"));
@@ -44,6 +65,8 @@ pub fn initialize(root: &Path, purpose: &str) -> Result<V> {
             .join("\n"),
     );
     text.push_str("\n\nRead the applicable instructions and declared checks before editing.\n");
+    cards::snapshot(root, Some(text.as_bytes()))?;
+    project::prepare(root)?;
     let state = cards::snapshot(root, Some(text.as_bytes()))?;
     if !dir.exists() {
         std::fs::create_dir(&dir)?;
@@ -54,7 +77,7 @@ pub fn initialize(root: &Path, purpose: &str) -> Result<V> {
         .open(&entry)?;
     file.write_all(text.as_bytes())?;
     drop(file);
-    if let Err(e) = write_receipt(root, &state) {
+    if let Err(e) = write_with_view(root, &state) {
         std::fs::remove_file(entry)?;
         return Err(e);
     }
@@ -69,6 +92,18 @@ pub fn update(root: &Path, upgrade: bool, acknowledge: &[String]) -> Result<V> {
             "older receipt: use update --upgrade for explicit migration",
         ));
     }
+    let initial = cards::snapshot(root, None)?;
+    let initial_sections = state_sections(&initial);
+    if acknowledge
+        .iter()
+        .any(|key| initial_sections.get(key).is_none())
+    {
+        return Err(Error::new(
+            "unknown section; inspect check --json for section IDs",
+        ));
+    }
+    project::prepare(root)?;
+    // A cited Justfile may have gained the view recipe. Hash the final bytes.
     let mut state = cards::snapshot(root, None)?;
     state["tests"] = previous.get("tests").cloned().unwrap_or(json!([]));
     let sections = state_sections(&state);
@@ -89,7 +124,7 @@ pub fn update(root: &Path, upgrade: bool, acknowledge: &[String]) -> Result<V> {
         let id = key.split('/').next().unwrap();
         state["reviews"][key] = json!({"fingerprint":sections[key]["fingerprint"],"card_sha256":state["cards"][id]["sha256"]});
     }
-    write_receipt(root, &state)?;
+    write_with_view(root, &state)?;
     let mut review = obj();
     for (k, _) in entries(&sections) {
         review[k] = json!(if state["reviews"].get(k).is_some() {

@@ -7,11 +7,14 @@ source evidence; Tabula never executes it. Read `.tabula/ENTRY.md`, then run:
 tabula update .
 tabula check .
 tabula context . --files src/greet.js --max-bytes 4000 --json
+tabula view . --open
 ```
 
 Edit the greeting text in `src/greet.js` and run `tabula check .` again. It exits
 1 and identifies the explanation that cites that file. Review the guide, update
 its prose if needed, then run `tabula update .` and `tabula check .`.
+Use `tabula view . --open` to see the changed sections in the offline table
+without updating the saved baseline. Generated HTML and receipts stay outside Git.
 
 An update records bytes; it does not prove correctness. To record an explicit
 review, obtain the section ID from `tabula check . --json` and pass it to

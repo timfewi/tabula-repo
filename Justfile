@@ -9,3 +9,7 @@ package:
 
 release:
     cargo build --locked --release
+
+# Refresh and open the local Tabula overview.
+tabula-view:
+    @tabula view . --open

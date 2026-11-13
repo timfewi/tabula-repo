@@ -14,8 +14,10 @@ tabula check /path/to/repo --json
 tabula update /path/to/repo --review entry/2-source-entrypoints-1
 ```
 
-`init` never replaces an existing card. `update` atomically replaces only the
-receipt and preserves explanations. A plain update records byte freshness, not
+`init` never replaces an existing card. `update` atomically replaces the
+receipt and preserves explanations. Both also refresh the derived HTML view
+and maintain the project's ignore rules and optional Just shortcut as described
+below. A plain update records byte freshness, not
 review or test success. `--review SECTION...` explicitly acknowledges those
 sections against their exact content, ancestor headings, resolved links and
 source hashes. The receipt also records the card hash at acknowledgement time.
@@ -50,6 +52,52 @@ missing, oversized, unsafe, malformed and unreadable inputs without echoing
 source contents or parser exceptions. `check` and `doctor` use exit 2 for invalid
 input; `check` uses 1 for stale bytes and 0 for current bytes. Unreviewed sections
 do not change the byte-freshness exit code.
+
+## Offline HTML overview
+
+```sh
+tabula view /path/to/repo
+tabula view /path/to/repo --open
+# From the project root, when a Justfile exists:
+just tabula-view
+```
+
+`view` writes `.tabula/index.html` as a self-contained, offline table of current
+cards, sections, cited source paths, byte freshness, review assertions, test
+evidence and diagnostics. The view uses the same bounded Rust inspection and
+receipt comparison as the other commands. It does not fetch links, execute
+project code, change a receipt or acknowledge a review. Card text is escaped
+rather than interpreted as HTML. Search and status filters work locally; the
+initial table is also useful without JavaScript.
+
+The file can be opened directly with `file://`; no server, build step, external
+font or network request is needed. The generation time identifies a snapshot,
+not live filesystem monitoring. Rerun `view` after changes. A missing receipt is
+shown as unrecorded; malformed receipts and broken sources have visible
+diagnostics. Successful HTML generation exits 0, including when the view shows
+stale bytes or diagnostics. Use `check` for freshness exit codes. `--json`
+reports `status: rendered`, the relative `path` and the displayed `state`.
+Unsafe or unwritable output paths fail with exit 2.
+
+Only `--open` requests the fixed operating-system browser launcher (xdg-open on
+Linux, open on macOS, rundll32 on Windows), with the generated path passed as an
+argument without a shell. A missing or failing launcher leaves the generated
+HTML available and reports `browser: unavailable` with a manual-opening hint.
+It does not certify that a browser window displayed the file.
+
+`init`, `update` and `view` preserve existing `.gitignore` content and append
+exact root-relative rules for `/.tabula/state.json` and `/.tabula/index.html`.
+The rules are idempotent and take precedence over earlier negations. A preexisting
+Justfile (`Justfile`, `justfile` or `.justfile`) gets a `tabula-view` recipe
+running `tabula view . --open`; an existing recipe or alias with that name is
+preserved. Tabula does not create a Justfile when none exists. UTF-8 text is
+bounded to 1 MiB per integration file; symlinks and nonregular destinations are
+refused before integration writes. Integration files are written separately;
+an I/O failure can leave an earlier ignore or recipe addition in place.
+
+Commit the guide, ignore rules and shortcut. Generated receipts and HTML stay
+local. Ignore rules do not untrack files already in Git; if necessary, explicitly
+remove generated files from the index while keeping their local copies.
 
 ## Markdown evidence contract
 

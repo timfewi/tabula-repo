@@ -10,3 +10,6 @@ __pycache__/
 /node_modules/
 /*.tgz
 /.tabula/state.json
+
+# Generated Tabula files (local to this checkout).
+/.tabula/index.html

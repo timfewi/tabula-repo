@@ -1,10 +1,10 @@
 usage: tabula [-h] [--version]
-                  {init,update,check,doctor,context,test-snapshot,import-test} ...
+                  {init,update,check,doctor,context,test-snapshot,import-test,view} ...
 
 Keep a short guide to your repository and find explanations that need review.
 
 positional arguments:
-  {init,update,check,doctor,context,test-snapshot,import-test}
+  {init,update,check,doctor,context,test-snapshot,import-test,view}
     init                Create a starter guide from the repository's declaring
                         files.
     update              Record current file hashes after editing your guide.
@@ -15,6 +15,7 @@ positional arguments:
                         files.
     test-snapshot       Describe the source inputs for a separately run test.
     import-test         Record a caller-supplied test result from stdin.
+    view                Generate an offline HTML table of the current guide state.
 
 options:
   -h, --help            show this help message and exit
